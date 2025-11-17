@@ -126,6 +126,17 @@ class ReservationForm extends Component
             $this->validate([
                 'table_id' => 'required|exists:tables,id',
             ]);
+            
+            // Validate that selected table has sufficient capacity
+            $selectedTable = Table::find($this->table_id);
+            if ($selectedTable && $selectedTable->capacity < $this->guest_count) {
+                $this->addError('table_id', 'Meja yang dipilih tidak cukup untuk ' . $this->guest_count . ' orang. Silakan pilih meja dengan kapasitas minimal ' . $this->guest_count . ' orang.');
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], []),
+                    null,
+                    null
+                );
+            }
         }
     }
 

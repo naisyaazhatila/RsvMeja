@@ -142,141 +142,236 @@
                     @if(count($availableTables) > 0)
                     
                     <!-- Legend -->
-                    <div class="flex flex-wrap gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                    <div class="flex flex-wrap gap-4 mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="flex items-center">
                             <div class="w-6 h-6 bg-green-500 rounded mr-2"></div>
-                            <span class="text-sm text-gray-700">Tersedia</span>
+                            <span class="text-sm font-medium text-gray-700">Tersedia untuk Anda ({{ $guest_count }} orang)</span>
                         </div>
                         <div class="flex items-center">
                             <div class="w-6 h-6 bg-wood-500 rounded mr-2 ring-4 ring-wood-200"></div>
-                            <span class="text-sm text-gray-700">Dipilih</span>
+                            <span class="text-sm font-medium text-gray-700">Dipilih</span>
                         </div>
                         <div class="flex items-center">
-                            <div class="w-6 h-6 bg-gray-300 rounded mr-2"></div>
-                            <span class="text-sm text-gray-700">Tidak Tersedia</span>
+                            <div class="w-6 h-6 bg-gray-400 rounded mr-2"></div>
+                            <span class="text-sm font-medium text-gray-700">Tidak Tersedia</span>
                         </div>
                     </div>
 
                     <!-- Visual Table Map -->
-                    <div class="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border-2 border-amber-200 min-h-[500px]">
+                    <div class="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 md:p-12 border-2 border-amber-200 overflow-hidden">
                         
                         <!-- Restaurant Name Badge -->
-                        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-bark-900 text-cream-100 px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-                            🍽️ Asya's Kitchen
+                        <div class="flex justify-center mb-6">
+                            <div class="bg-bark-900 text-cream-100 px-6 py-2 rounded-lg text-sm font-bold shadow-lg">
+                                ASYA'S KITCHEN
+                            </div>
+                        </div>
+
+                        <!-- Kitchen and Cashier Row -->
+                        <div class="flex justify-between mb-8 px-2">
+                            <div class="bg-gray-300 px-4 py-2 rounded-lg border-2 border-gray-400 shadow-md">
+                                <span class="text-xs font-bold text-gray-700">DAPUR</span>
+                            </div>
+                            <div class="bg-gray-300 px-4 py-2 rounded-lg border-2 border-gray-400 shadow-md">
+                                <span class="text-xs font-bold text-gray-700">KASIR</span>
+                            </div>
+                        </div>
+
+                        <!-- Tables Layout -->
+                        <div class="mb-8">
+                            @php
+                                // Get all tables (both available and unavailable for current guest count)
+                                $allTables = \App\Models\Table::where('is_active', true)
+                                    ->orderBy('capacity')
+                                    ->orderBy('table_number')
+                                    ->get();
+                                
+                                // Check which tables are booked for the selected date/time
+                                $bookedTableIds = \App\Models\Reservation::where('reservation_date', $this->reservation_date)
+                                    ->where('reservation_time', $this->reservation_time)
+                                    ->whereIn('status', ['pending', 'confirmed'])
+                                    ->pluck('table_id')
+                                    ->toArray();
+                                
+                                $availableTableIds = $availableTables->pluck('id')->toArray();
+                            @endphp
+
+                            <!-- Tables Grid - 3 columns layout -->
+                            <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+                                @foreach($allTables as $index => $table)
+                                @php
+                                    $isBooked = in_array($table->id, $bookedTableIds);
+                                    $isAvailableForGuest = in_array($table->id, $availableTableIds);
+                                    $isSelected = $table_id == $table->id;
+                                    $canSelect = $isAvailableForGuest && !$isBooked;
+                                @endphp
+                                
+                                <div class="group {{ $canSelect ? 'cursor-pointer' : 'cursor-not-allowed' }}"
+                                     @if($canSelect) wire:click="$set('table_id', {{ $table->id }})" @endif>
+                                    
+                                    <!-- Table Card -->
+                                    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border-2
+                                        {{ $isSelected ? 'border-wood-500 shadow-2xl scale-105' : 
+                                           ($canSelect ? 'border-green-500 hover:scale-102' : 'border-gray-300 opacity-75') }}">
+                                        
+                                        <!-- Header Section -->
+                                        <div class="relative h-32 flex items-center justify-center
+                                            {{ $isSelected ? 'bg-gradient-to-br from-wood-500 to-wood-600' : 
+                                               ($canSelect ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-gray-400 to-gray-500') }}">
+                                            
+                                            <!-- Table Number Badge -->
+                                            <div class="absolute top-4 left-4 z-20">
+                                                <div class="bg-white rounded-lg px-3 py-1.5 shadow-md">
+                                                    <span class="text-bark-900 font-bold text-sm">No. {{ $table->table_number ?? ($index + 1) }}</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Status Badge -->
+                                            <div class="absolute top-4 right-4 z-20">
+                                                @if($isSelected)
+                                                <div class="bg-white rounded-full p-2 shadow-lg">
+                                                    <svg class="w-5 h-5 text-wood-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                                @elseif($isBooked)
+                                                <div class="bg-red-500 rounded-lg px-2 py-1 shadow-md">
+                                                    <span class="text-white text-xs font-bold">Terisi</span>
+                                                </div>
+                                                @elseif($canSelect)
+                                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-lg px-2 py-1">
+                                                    <span class="text-white text-xs font-medium">Tersedia</span>
+                                                </div>
+                                                @else
+                                                <div class="bg-gray-700 rounded-lg px-2 py-1 shadow-md">
+                                                    <span class="text-white text-xs font-bold">N/A</span>
+                                                </div>
+                                                @endif
+                                            </div>
+
+                                            <!-- Table Icon -->
+                                            <div class="relative z-10">
+                                                <svg class="w-16 h-16 text-white opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 21h18M5 21V7l8-4v18M21 21V10l-8-3"/>
+                                                    <circle cx="12" cy="14" r="6" stroke-width="1.5"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <!-- Body Section -->
+                                        <div class="p-5">
+                                            <!-- Table Name -->
+                                            <h3 class="text-bark-900 font-bold text-lg mb-3 text-center">{{ $table->name }}</h3>
+                                            
+                                            <!-- Details Grid -->
+                                            <div class="space-y-2.5">
+                                                <!-- Capacity -->
+                                                <div class="flex items-center justify-center gap-2 p-3 bg-gray-50 rounded-lg">
+                                                    <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                                    </svg>
+                                                    <span class="text-base font-bold text-bark-900">{{ $table->capacity }} Orang</span>
+                                                </div>
+
+                                                <!-- Visual Seats -->
+                                                <div class="flex items-center justify-center gap-1.5 p-2.5 bg-gray-50 rounded-lg">
+                                                    @for($i = 0; $i < min($table->capacity, 6); $i++)
+                                                    <div class="w-2.5 h-2.5 bg-bark-900 rounded-full"></div>
+                                                    @endfor
+                                                    @if($table->capacity > 6)
+                                                    <span class="text-xs text-gray-600 ml-1">+{{ $table->capacity - 6 }}</span>
+                                                    @endif
+                                                </div>
+
+                                                @if($table->description)
+                                                <!-- Location/Description -->
+                                                <div class="flex items-start gap-2 p-2.5 bg-gray-50 rounded-lg">
+                                                    <svg class="w-5 h-5 text-gray-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    </svg>
+                                                    <span class="text-xs text-gray-600 leading-relaxed">{{ $table->description }}</span>
+                                                </div>
+                                                @endif
+                                            </div>
+
+                                            <!-- Status Message -->
+                                            @if(!$canSelect)
+                                            <div class="mt-4 p-3 rounded-lg text-center
+                                                {{ $isBooked ? 'bg-red-50 border border-red-200' : 'bg-gray-50 border border-gray-200' }}">
+                                                @if($isBooked)
+                                                <p class="text-xs font-semibold text-red-700">Meja sudah dipesan untuk waktu ini</p>
+                                                @else
+                                                <p class="text-xs font-semibold text-gray-600">
+                                                    @if($table->capacity < $guest_count)
+                                                    Kapasitas terlalu kecil ({{ $guest_count }} tamu)
+                                                    @else
+                                                    Kapasitas terlalu besar ({{ $guest_count }} tamu)
+                                                    @endif
+                                                </p>
+                                                @endif
+                                            </div>
+                                            @else
+                                            <!-- Action Hint -->
+                                            <div class="mt-4 text-center">
+                                                @if($isSelected)
+                                                <div class="bg-wood-50 border border-wood-200 rounded-lg p-3">
+                                                    <p class="text-xs font-bold text-wood-700">Meja Terpilih</p>
+                                                </div>
+                                                @else
+                                                <div class="bg-green-50 border border-green-200 rounded-lg p-3 group-hover:bg-green-100 transition-colors">
+                                                    <p class="text-xs font-semibold text-green-700">Klik untuk pilih meja ini</p>
+                                                </div>
+                                                @endif
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <!-- Entrance -->
-                        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center">
-                            <div class="bg-gray-200 px-6 py-2 rounded-t-lg font-semibold text-gray-700">
-                                🚪 PINTU MASUK
+                        <div class="flex justify-center mt-8">
+                            <div class="bg-gray-300 px-6 py-2 rounded-lg font-bold text-gray-700 text-sm border-2 border-gray-400 shadow-md">
+                                PINTU MASUK
                             </div>
-                        </div>
-
-                        <!-- Kitchen Area (Top Left) -->
-                        <div class="absolute top-16 left-4 bg-gray-200 px-4 py-3 rounded-lg border-2 border-gray-300">
-                            <span class="text-xs font-bold text-gray-600">👨‍🍳 DAPUR</span>
-                        </div>
-
-                        <!-- Cashier (Top Right) -->
-                        <div class="absolute top-16 right-4 bg-gray-200 px-4 py-3 rounded-lg border-2 border-gray-300">
-                            <span class="text-xs font-bold text-gray-600">💳 KASIR</span>
-                        </div>
-
-                        <!-- Tables Grid Layout -->
-                        <div class="grid grid-cols-4 gap-6 pt-32 pb-20 px-8">
-                            @php
-                                // Get all tables and mark which are available
-                                $allTableIds = $availableTables->pluck('id')->toArray();
-                                // Create a 4x3 grid (12 positions) - adjust based on your actual tables
-                                $tablePositions = [
-                                    ['row' => 1, 'col' => 1], ['row' => 1, 'col' => 2], ['row' => 1, 'col' => 3], ['row' => 1, 'col' => 4],
-                                    ['row' => 2, 'col' => 1], ['row' => 2, 'col' => 2], ['row' => 2, 'col' => 3], ['row' => 2, 'col' => 4],
-                                    ['row' => 3, 'col' => 1], ['row' => 3, 'col' => 2], ['row' => 3, 'col' => 3], ['row' => 3, 'col' => 4],
-                                ];
-                            @endphp
-
-                            @foreach($availableTables as $index => $table)
-                            <div wire:click="$set('table_id', {{ $table->id }})" 
-                                 class="cursor-pointer relative group">
-                                
-                                <!-- Table Visual -->
-                                <div class="relative aspect-square rounded-xl transition-all duration-300 transform hover:scale-105
-                                    {{ $table_id == $table->id ? 'bg-wood-500 ring-4 ring-wood-200 shadow-xl' : 'bg-green-500 hover:bg-green-600 shadow-lg' }}">
-                                    
-                                    <!-- Table Number Badge -->
-                                    <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shadow-md
-                                        {{ $table_id == $table->id ? 'bg-bark-900 text-cream-100' : 'bg-white text-bark-900' }}">
-                                        {{ $table->table_number ?? ($index + 1) }}
-                                    </div>
-
-                                    <!-- Table Icon -->
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        @if($table_id == $table->id)
-                                        <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                        </svg>
-                                        @else
-                                        <svg class="w-10 h-10 text-white opacity-70" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                                        </svg>
-                                        @endif
-                                    </div>
-
-                                    <!-- Capacity Badge -->
-                                    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 px-2 py-1 rounded-full text-xs font-bold text-bark-900">
-                                        👥 {{ $table->capacity }}
-                                    </div>
-                                </div>
-
-                                <!-- Table Info Tooltip (on hover) -->
-                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                                    <div class="bg-bark-900 text-cream-100 px-3 py-2 rounded-lg text-xs whitespace-nowrap shadow-xl">
-                                        <div class="font-bold">{{ $table->name }}</div>
-                                        @if($table->description)
-                                        <div class="text-cream-200 text-xs mt-1">{{ $table->description }}</div>
-                                        @endif
-                                    </div>
-                                    <div class="w-2 h-2 bg-bark-900 transform rotate-45 mx-auto -mt-1"></div>
-                                </div>
-                            </div>
-                            @endforeach
-
-                            @php
-                                // Fill empty slots if less than 12 tables
-                                $emptySlots = 12 - count($availableTables);
-                            @endphp
-                            @for($i = 0; $i < $emptySlots; $i++)
-                            <div class="relative aspect-square rounded-xl bg-gray-200 border-2 border-dashed border-gray-300 flex items-center justify-center opacity-50">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </div>
-                            @endfor
                         </div>
 
                         <!-- Selected Table Info -->
                         @if($table_id)
                         @php
-                            $selectedTable = $availableTables->firstWhere('id', $table_id);
+                            $selectedTable = $allTables->firstWhere('id', $table_id);
                         @endphp
-                        <div class="mt-6 bg-wood-500 text-white p-4 rounded-lg shadow-lg">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-bold text-lg">✓ Meja Terpilih: {{ $selectedTable->name }}</h4>
-                                    <p class="text-sm text-cream-200 mt-1">
-                                        Kapasitas {{ $selectedTable->capacity }} orang
+                        @if($selectedTable)
+                        <div class="mt-8 bg-wood-500 text-white p-6 rounded-xl shadow-lg">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-4">
+                                    <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+                                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xl">Meja Terpilih: {{ $selectedTable->name }}</h4>
+                                        <p class="text-cream-100 mt-2">
+                                            Kapasitas maksimal {{ $selectedTable->capacity }} orang
+                                        </p>
                                         @if($selectedTable->description)
-                                        · {{ $selectedTable->description }}
+                                        <p class="text-cream-200 text-sm mt-1">{{ $selectedTable->description }}</p>
                                         @endif
-                                    </p>
+                                    </div>
                                 </div>
-                                <button wire:click="$set('table_id', null)" type="button" class="text-white hover:text-cream-300 transition">
+                                <button wire:click="$set('table_id', null)" type="button" 
+                                    class="text-white hover:text-cream-300 transition p-2 hover:bg-white hover:bg-opacity-10 rounded-lg">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
+                        @endif
                         @endif
 
                     </div>

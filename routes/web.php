@@ -85,11 +85,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Settings
     Route::get('/pengaturan', [SettingController::class, 'index'])->name('settings.index');
-    Route::post('/pengaturan', [SettingController::class, 'update'])->name('settings.update');
+    Route::match(['put', 'patch'], '/pengaturan', [SettingController::class, 'update'])->name('settings.update');
 
     // Reports
     Route::get('/laporan', [ReportController::class, 'index'])->name('report.index');
-    Route::post('/laporan/export', [ReportController::class, 'export'])->name('report.export');
+    Route::get('/laporan/export', [ReportController::class, 'export'])->name('report.export');
 
     // Profile (from Breeze)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

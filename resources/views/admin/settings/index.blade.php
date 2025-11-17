@@ -43,25 +43,25 @@
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" name="email" id="email" 
-                                   value="{{ old('email', setting('email')) }}"
+                            <label for="restaurant_email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" name="restaurant_email" id="restaurant_email" 
+                                   value="{{ old('restaurant_email', setting('restaurant_email')) }}"
                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                         </div>
 
                         <!-- Phone -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Telepon</label>
-                            <input type="text" name="phone" id="phone" 
-                                   value="{{ old('phone', setting('phone')) }}"
+                            <label for="restaurant_phone" class="block text-sm font-medium text-gray-700 mb-2">Telepon</label>
+                            <input type="text" name="restaurant_phone" id="restaurant_phone" 
+                                   value="{{ old('restaurant_phone', setting('restaurant_phone')) }}"
                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                         </div>
 
                         <!-- Address -->
                         <div>
-                            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
-                            <textarea name="address" id="address" rows="3"
-                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">{{ old('address', setting('address')) }}</textarea>
+                            <label for="restaurant_address" class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                            <textarea name="restaurant_address" id="restaurant_address" rows="3"
+                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">{{ old('restaurant_address', setting('restaurant_address')) }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -73,27 +73,27 @@
                     <div class="space-y-6">
                         <!-- Facebook -->
                         <div>
-                            <label for="facebook" class="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
-                            <input type="url" name="facebook" id="facebook" 
-                                   value="{{ old('facebook', setting('facebook')) }}"
+                            <label for="facebook_url" class="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
+                            <input type="url" name="facebook_url" id="facebook_url" 
+                                   value="{{ old('facebook_url', setting('facebook_url')) }}"
                                    placeholder="https://facebook.com/yourpage"
                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                         </div>
 
                         <!-- Instagram -->
                         <div>
-                            <label for="instagram" class="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
-                            <input type="url" name="instagram" id="instagram" 
-                                   value="{{ old('instagram', setting('instagram')) }}"
+                            <label for="instagram_url" class="block text-sm font-medium text-gray-700 mb-2">Instagram URL</label>
+                            <input type="url" name="instagram_url" id="instagram_url" 
+                                   value="{{ old('instagram_url', setting('instagram_url')) }}"
                                    placeholder="https://instagram.com/yourprofile"
                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                         </div>
 
                         <!-- WhatsApp -->
                         <div>
-                            <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Number</label>
-                            <input type="text" name="whatsapp" id="whatsapp" 
-                                   value="{{ old('whatsapp', setting('whatsapp')) }}"
+                            <label for="whatsapp_number" class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Number</label>
+                            <input type="text" name="whatsapp_number" id="whatsapp_number" 
+                                   value="{{ old('whatsapp_number', setting('whatsapp_number')) }}"
                                    placeholder="628123456789"
                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                             <p class="mt-1 text-sm text-gray-500">Format: 628xxxxxxxxxx (tanpa +)</p>
@@ -106,10 +106,20 @@
                     <h2 class="text-xl font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">Jam Operasional</h2>
                     
                     <div class="space-y-6">
+                        <!-- Operating Hours Text -->
+                        <div>
+                            <label for="operating_hours" class="block text-sm font-medium text-gray-700 mb-2">Jam Operasional</label>
+                            <input type="text" name="operating_hours" id="operating_hours" 
+                                   value="{{ old('operating_hours', setting('operating_hours')) }}"
+                                   placeholder="10:00 - 22:00"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
+                            <p class="mt-1 text-sm text-gray-500">Format: HH:MM - HH:MM</p>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Opening Time -->
                             <div>
-                                <label for="opening_time" class="block text-sm font-medium text-gray-700 mb-2">Jam Buka</label>
+                                <label for="opening_time" class="block text-sm font-medium text-gray-700 mb-2">Jam Buka (Detail)</label>
                                 <input type="time" name="opening_time" id="opening_time" 
                                        value="{{ old('opening_time', setting('opening_time')) }}"
                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
@@ -117,7 +127,7 @@
 
                             <!-- Closing Time -->
                             <div>
-                                <label for="closing_time" class="block text-sm font-medium text-gray-700 mb-2">Jam Tutup</label>
+                                <label for="closing_time" class="block text-sm font-medium text-gray-700 mb-2">Jam Tutup (Detail)</label>
                                 <input type="time" name="closing_time" id="closing_time" 
                                        value="{{ old('closing_time', setting('closing_time')) }}"
                                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
@@ -135,6 +145,50 @@
                                 <label for="is_closed_monday" class="font-medium text-gray-700">Tutup pada hari Senin</label>
                                 <p class="text-gray-500">Centang jika restoran tutup setiap hari Senin</p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Settings -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">Pengaturan Pembayaran</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- DP Amount -->
+                        <div>
+                            <label for="dp_amount" class="block text-sm font-medium text-gray-700 mb-2">Jumlah Down Payment (Rp)</label>
+                            <input type="number" name="dp_amount" id="dp_amount" 
+                                   value="{{ old('dp_amount', setting('dp_amount', 100000)) }}"
+                                   min="0" step="10000"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
+                            <p class="mt-1 text-sm text-gray-500">DP yang harus dibayar untuk reservasi</p>
+                        </div>
+
+                        <!-- Bank Name -->
+                        <div>
+                            <label for="bank_name" class="block text-sm font-medium text-gray-700 mb-2">Nama Bank</label>
+                            <input type="text" name="bank_name" id="bank_name" 
+                                   value="{{ old('bank_name', setting('bank_name')) }}"
+                                   placeholder="BCA"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
+                        </div>
+
+                        <!-- Account Number -->
+                        <div>
+                            <label for="account_number" class="block text-sm font-medium text-gray-700 mb-2">Nomor Rekening</label>
+                            <input type="text" name="account_number" id="account_number" 
+                                   value="{{ old('account_number', setting('account_number')) }}"
+                                   placeholder="5420123456"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
+                        </div>
+
+                        <!-- Account Holder -->
+                        <div>
+                            <label for="account_holder" class="block text-sm font-medium text-gray-700 mb-2">Atas Nama</label>
+                            <input type="text" name="account_holder" id="account_holder" 
+                                   value="{{ old('account_holder', setting('account_holder')) }}"
+                                   placeholder="Asya's Kitchen"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
                         </div>
                     </div>
                 </div>
@@ -162,14 +216,13 @@
                             </div>
                         </div>
 
-                        <!-- Min DP Amount -->
+                        <!-- Google Maps Embed -->
                         <div>
-                            <label for="min_dp_amount" class="block text-sm font-medium text-gray-700 mb-2">Minimal Down Payment (Rp)</label>
-                            <input type="number" name="min_dp_amount" id="min_dp_amount" 
-                                   value="{{ old('min_dp_amount', setting('min_dp_amount', 100000)) }}"
-                                   min="0" step="10000"
-                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">
-                            <p class="mt-1 text-sm text-gray-500">Minimal DP yang harus dibayar untuk reservasi</p>
+                            <label for="google_maps_embed" class="block text-sm font-medium text-gray-700 mb-2">Google Maps Embed Code</label>
+                            <textarea name="google_maps_embed" id="google_maps_embed" rows="4"
+                                      placeholder="<iframe src='https://www.google.com/maps/embed?...' width='600' height='450'></iframe>"
+                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500">{{ old('google_maps_embed', setting('google_maps_embed')) }}</textarea>
+                            <p class="mt-1 text-sm text-gray-500">Paste embed code dari Google Maps</p>
                         </div>
                     </div>
                 </div>
