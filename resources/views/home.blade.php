@@ -65,7 +65,7 @@
                 <div class="relative">
                     <img src="{{ asset('storage/about-image.jpg') }}" alt="Restaurant Interior" class="rounded-lg shadow-2xl" onerror="this.src='https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800'">
                     <div class="absolute -bottom-6 -right-6 bg-wood-500 text-cream-100 p-6 rounded-lg shadow-xl">
-                        <div class="text-2xl font-bold">⭐ 4.8/5</div>
+                        <div class="text-2xl font-bold">4.8/5</div>
                         <div class="text-sm">Rating Pelanggan</div>
                     </div>
                 </div>

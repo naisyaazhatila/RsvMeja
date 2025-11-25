@@ -26,20 +26,6 @@
                             </svg>
                         </div>
                         @endif
-                        
-                        <!-- Discount Badge -->
-                        <div class="absolute top-4 left-4">
-                            <div class="bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg">
-                                <div class="text-3xl font-bold leading-none">
-                                    @if($promo->discount_type === 'percentage')
-                                    {{ $promo->discount_value }}%
-                                    @else
-                                    Rp {{ number_format($promo->discount_value / 1000, 0) }}K
-                                    @endif
-                                </div>
-                                <div class="text-xs uppercase">Diskon</div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Content -->

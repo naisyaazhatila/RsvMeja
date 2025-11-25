@@ -146,7 +146,7 @@
                                         @endif
                                         @if($menu->is_featured)
                                         <span class="absolute top-3 right-3 bg-yellow-500 text-bark-900 px-3 py-1 rounded-full text-xs font-bold shadow">
-                                            ⭐ Favorit
+                                            Favorit
                                         </span>
                                         @endif
                                     </div>
@@ -221,7 +221,7 @@
                                 @endif
                                 @if($menu->is_featured)
                                 <span class="absolute top-3 right-3 bg-yellow-500 text-bark-900 px-3 py-1 rounded-full text-xs font-bold shadow">
-                                    ⭐ Favorit
+                                    Favorit
                                 </span>
                                 @endif
                             </div>
