@@ -84,11 +84,11 @@ class ReservationsExport implements FromCollection, WithHeadings, WithMapping
             $reservation->table->name ?? '-',
             $reservation->reservation_date->format('d/m/Y'),
             $reservation->reservation_time ? date('H:i', strtotime($reservation->reservation_time)) : '-',
-            $reservation->number_of_people,
+            $reservation->guest_count,
             $statusLabels[$reservation->status] ?? ucfirst($reservation->status),
             $paymentLabels[$reservation->payment_status] ?? ucfirst($reservation->payment_status),
             'Rp ' . number_format($reservation->dp_amount, 0, ',', '.'),
-            $reservation->special_request ?? '-',
+            $reservation->special_requests ?? '-',
             $reservation->created_at->format('d/m/Y H:i'),
         ];
     }

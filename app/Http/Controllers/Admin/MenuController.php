@@ -32,13 +32,19 @@ class MenuController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'is_vegetarian' => 'boolean',
-            'is_spicy' => 'boolean',
+            'is_vegetarian' => 'nullable|boolean',
+            'is_spicy' => 'nullable|boolean',
             'spicy_level' => 'nullable|integer|min:1|max:5',
-            'is_available' => 'boolean',
-            'is_featured' => 'boolean',
+            'is_available' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean',
             'sort_order' => 'nullable|integer',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_vegetarian'] = $request->has('is_vegetarian') ? true : false;
+        $validated['is_spicy'] = $request->has('is_spicy') ? true : false;
+        $validated['is_available'] = $request->has('is_available') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         // Handle image upload
         if ($request->hasFile('image')) {
@@ -80,13 +86,19 @@ class MenuController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'is_vegetarian' => 'boolean',
-            'is_spicy' => 'boolean',
+            'is_vegetarian' => 'nullable|boolean',
+            'is_spicy' => 'nullable|boolean',
             'spicy_level' => 'nullable|integer|min:1|max:5',
-            'is_available' => 'boolean',
-            'is_featured' => 'boolean',
+            'is_available' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean',
             'sort_order' => 'nullable|integer',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_vegetarian'] = $request->has('is_vegetarian') ? true : false;
+        $validated['is_spicy'] = $request->has('is_spicy') ? true : false;
+        $validated['is_available'] = $request->has('is_available') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         // Handle image upload
         if ($request->hasFile('image')) {

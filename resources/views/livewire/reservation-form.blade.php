@@ -99,7 +99,8 @@
                                 Tanggal Reservasi <span class="text-red-500">*</span>
                             </label>
                             <input type="date" wire:model="reservation_date" 
-                                   min="{{ now()->format('Y-m-d') }}"
+                                   x-data
+                                   x-init="$el.min = new Date().toISOString().split('T')[0]"
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-wood-500 focus:border-transparent transition">
                             @error('reservation_date') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
                         </div>
@@ -113,8 +114,12 @@
                                 <option value="">Pilih Waktu</option>
                                 @foreach(range(10, 21) as $hour)
                                     @foreach(['00', '30'] as $minute)
-                                    <option value="{{ sprintf('%02d:%s', $hour, $minute) }}">
-                                        {{ sprintf('%02d:%s', $hour, $minute) }}
+                                    @php
+                                        $time24 = sprintf('%02d:%s', $hour, $minute);
+                                        $time12 = date('g:i A', strtotime($time24));
+                                    @endphp
+                                    <option value="{{ $time24 }}">
+                                        {{ $time12 }}
                                     </option>
                                     @endforeach
                                 @endforeach
@@ -129,6 +134,19 @@
                             <input type="number" wire:model="guest_count" min="1" max="20"
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-wood-500 focus:border-transparent transition">
                             @error('guest_count') <span class="text-red-500 text-sm mt-1">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <!-- Timezone Info -->
+                    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg" x-data="{
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                        offset: new Date().getTimezoneOffset() / -60
+                    }">
+                        <div class="flex items-center text-sm text-blue-800">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Waktu disesuaikan dengan timezone Anda: <strong x-text="timezone"></strong> (GMT<span x-text="offset >= 0 ? '+' + offset : offset"></span>)</span>
                         </div>
                     </div>
                 </div>
@@ -416,7 +434,7 @@
                             </div>
                             <div class="flex justify-between">
                                 <span>Waktu:</span>
-                                <span class="font-semibold">{{ $reservation_time }}</span>
+                                <span class="font-semibold">{{ date('g:i A', strtotime($reservation_time)) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Jumlah Tamu:</span>

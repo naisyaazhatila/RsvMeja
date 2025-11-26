@@ -88,6 +88,21 @@ class ReservationController extends Controller
         }
     }
 
+    public function complete(Reservation $reservation)
+    {
+        if ($reservation->status === 'completed') {
+            return redirect()->back()->with('info', 'Reservasi sudah diselesaikan sebelumnya');
+        }
+        
+        if ($reservation->status !== 'confirmed') {
+            return redirect()->back()->with('error', 'Hanya reservasi yang sudah dikonfirmasi yang bisa diselesaikan');
+        }
+        
+        $reservation->update(['status' => 'completed']);
+        
+        return redirect()->back()->with('success', 'Reservasi berhasil diselesaikan');
+    }
+
     public function destroy(Reservation $reservation)
     {
         $reservation->delete();

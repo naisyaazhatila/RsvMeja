@@ -10,6 +10,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $restaurantName = setting('restaurant_name', "Asya's Kitchen");
+        
         $stats = [
             'total_reservations' => Reservation::whereMonth('created_at', now()->month)->count(),
             'pending_confirmations' => Reservation::where('status', 'pending')->count(),
@@ -36,6 +38,6 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
         
-        return view('admin.dashboard', compact('stats', 'chartData', 'recentReservations'));
+        return view('admin.dashboard', compact('stats', 'chartData', 'recentReservations', 'restaurantName'));
     }
 }

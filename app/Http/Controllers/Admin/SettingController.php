@@ -86,7 +86,10 @@ class SettingController extends Controller
             if ($request->has($key)) {
                 Setting::updateOrCreate(
                     ['key' => $key],
-                    ['value' => $request->input($key)]
+                    [
+                        'value' => $request->input($key),
+                        'group' => $this->getSettingGroup($key)
+                    ]
                 );
             }
         }
@@ -94,7 +97,10 @@ class SettingController extends Controller
         // Handle checkbox (is_closed_monday)
         Setting::updateOrCreate(
             ['key' => 'is_closed_monday'],
-            ['value' => $request->has('is_closed_monday') ? '1' : '0']
+            [
+                'value' => $request->has('is_closed_monday') ? '1' : '0',
+                'group' => 'general'
+            ]
         );
 
         // Clear settings cache
@@ -102,5 +108,18 @@ class SettingController extends Controller
 
         return redirect()->back()
             ->with('success', 'Pengaturan berhasil disimpan!');
+    }
+    
+    private function getSettingGroup($key)
+    {
+        if (str_starts_with($key, 'restaurant_')) {
+            return 'restaurant';
+        } elseif (in_array($key, ['bank_name', 'account_number', 'account_holder', 'dp_amount'])) {
+            return 'payment';
+        } elseif (in_array($key, ['whatsapp_number', 'instagram_url', 'facebook_url'])) {
+            return 'social';
+        } else {
+            return 'general';
+        }
     }
 }

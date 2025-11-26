@@ -39,11 +39,24 @@ class GalleryImage extends Model
     // Accessor
     public function getImageUrlAttribute(): string
     {
+        if (!$this->image_path) {
+            return asset('img/placeholder-gallery.jpg');
+        }
+        // Handle both formats: with or without 'storage/' prefix
+        if (str_starts_with($this->image_path, 'storage/')) {
+            return asset($this->image_path);
+        }
         return asset('storage/' . $this->image_path);
     }
 
     public function getThumbnailUrlAttribute(): string
     {
+        if (!$this->thumbnail_path) {
+            return $this->image_url;
+        }
+        if (str_starts_with($this->thumbnail_path, 'storage/')) {
+            return asset($this->thumbnail_path);
+        }
         return asset('storage/' . $this->thumbnail_path);
     }
 }

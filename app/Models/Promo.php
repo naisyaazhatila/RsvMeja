@@ -13,7 +13,9 @@ class Promo extends Model
         'image',
         'discount_type',
         'discount_value',
-        'terms',
+        'terms_conditions',
+        'min_transaction',
+        'max_discount',
         'valid_from',
         'valid_until',
         'is_active',
@@ -40,6 +42,14 @@ class Promo extends Model
     }
 
     // Accessors
+    public function getImageUrlAttribute(): string
+    {
+        if (!$this->image) {
+            return asset('img/placeholder-promo.jpg');
+        }
+        return asset('storage/' . $this->image);
+    }
+    
     public function getIsExpiringSoonAttribute(): bool
     {
         return $this->valid_until->diffInDays(today()) < 7

@@ -43,10 +43,12 @@ class GalleryController extends Controller
             $path = 'gallery/' . $filename;
             Storage::disk('public')->put($path, $img->encode());
             
-            $validated['image_path'] = 'storage/' . $path;
+            // Store path without 'storage/' prefix - it will be added in view
+            $validated['image_path'] = $path;
         }
 
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+        $validated['description'] = $request->input('description', '');
 
         GalleryImage::create($validated);
 
@@ -77,8 +79,8 @@ class GalleryController extends Controller
 
         if ($request->hasFile('image')) {
             // Delete old image
-            if ($galeri->image_path && file_exists(public_path($galeri->image_path))) {
-                unlink(public_path($galeri->image_path));
+            if ($galeri->image_path) {
+                Storage::disk('public')->delete($galeri->image_path);
             }
 
             $image = $request->file('image');
@@ -90,10 +92,12 @@ class GalleryController extends Controller
             $path = 'gallery/' . $filename;
             Storage::disk('public')->put($path, $img->encode());
             
-            $validated['image_path'] = 'storage/' . $path;
+            // Store path without 'storage/' prefix
+            $validated['image_path'] = $path;
         }
 
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
+        $validated['description'] = $request->input('description', $galeri->description);
 
         $galeri->update($validated);
 

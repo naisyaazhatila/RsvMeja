@@ -26,8 +26,11 @@ class TableController extends Controller
             'capacity' => 'required|integer|min:1|max:20',
             'position_x' => 'nullable|integer',
             'position_y' => 'nullable|integer',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+        
+        // Fix checkbox handling - if not present in request, set to false
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         Table::create($validated);
 
@@ -53,8 +56,11 @@ class TableController extends Controller
             'capacity' => 'required|integer|min:1|max:20',
             'position_x' => 'nullable|integer',
             'position_y' => 'nullable|integer',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+        
+        // Fix checkbox handling - if not present in request, set to false
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         $meja->update($validated);
 

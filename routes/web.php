@@ -33,19 +33,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
 Route::get('/galeri', [HomeController::class, 'gallery'])->name('gallery');
 Route::get('/promo', [HomeController::class, 'promos'])->name('promos');
+Route::get('/testimoni', [HomeController::class, 'testimonials'])->name('testimonials');
 Route::get('/reservasi', ReservationForm::class)->name('reservation')->middleware('auth');
 Route::get('/reservasi/{bookingCode}/payment', [PaymentInstructionController::class, 'show'])->name('payment.instruction');
 Route::get('/my-reservations', [MyReservationController::class, 'index'])->name('my-reservations')->middleware('auth');
 Route::get('/my-reservations/{reservation}', [MyReservationController::class, 'show'])->name('my-reservations.show')->middleware('auth');
-Route::get('/kontak', function () { return view('contact'); })->name('contact');
-Route::post('/kontak/send', function () { 
-    return back()->with('success', 'Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.'); 
-})->name('contact.send');
+Route::get('/kontak', [\App\Http\Controllers\ContactController::class, 'index'])->name('contact');
+Route::post('/kontak/send', [\App\Http\Controllers\ContactController::class, 'send'])->name('contact.send');
 Route::get('/kebijakan-privasi', function () { return view('privacy'); })->name('privacy');
 Route::get('/syarat-ketentuan', function () { return view('terms'); })->name('terms');
-Route::post('/newsletter/subscribe', function () { 
-    return back()->with('success', 'Terima kasih telah berlangganan newsletter kami!'); 
-})->name('newsletter.subscribe');
+Route::post('/newsletter/subscribe', [\App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +59,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/reservasi/{reservation}', [AdminReservationController::class, 'show'])->name('reservasi.show');
     Route::post('/reservasi/{reservation}/confirm', [AdminReservationController::class, 'confirm'])->name('reservasi.confirm');
     Route::post('/reservasi/{reservation}/cancel', [AdminReservationController::class, 'cancel'])->name('reservasi.cancel');
+    Route::post('/reservasi/{reservation}/complete', [AdminReservationController::class, 'complete'])->name('reservasi.complete');
     Route::post('/reservasi/{reservation}/confirm-payment', [AdminReservationController::class, 'confirmPayment'])->name('reservasi.confirmPayment');
     Route::post('/reservasi/{reservation}/reject-payment', [AdminReservationController::class, 'rejectPayment'])->name('reservasi.rejectPayment');
     Route::delete('/reservasi/{reservation}', [AdminReservationController::class, 'destroy'])->name('reservasi.destroy');

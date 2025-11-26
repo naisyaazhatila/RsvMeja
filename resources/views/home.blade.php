@@ -183,7 +183,7 @@
                         </svg>
                         @endfor
                     </div>
-                    <p class="text-gray-700 mb-4 italic">"{{ $testimonial->message }}"</p>
+                    <p class="text-gray-700 mb-4 italic">"{{ $testimonial->comment }}"</p>
                     <div class="flex items-center">
                         <div class="w-12 h-12 bg-wood-500 rounded-full flex items-center justify-center text-cream-100 font-bold text-lg">
                             {{ strtoupper(substr($testimonial->customer_name, 0, 1)) }}
@@ -195,6 +195,16 @@
                     </div>
                 </div>
                 @endforeach
+            </div>
+
+            <!-- View All Button -->
+            <div class="text-center mt-12">
+                <a href="{{ route('testimonials') }}" class="inline-flex items-center px-8 py-3 bg-wood-500 text-cream-100 rounded-lg font-semibold hover:bg-wood-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    Lihat Semua Testimoni
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
             </div>
         </div>
     </section>

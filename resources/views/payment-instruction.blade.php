@@ -79,7 +79,7 @@
                     
                     <div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase mb-1">Waktu</h3>
-                        <p class="text-lg text-gray-700">{{ $reservation->reservation_time }}</p>
+                        <p class="text-lg text-gray-700">{{ date('g:i A', strtotime($reservation->reservation_time)) }}</p>
                     </div>
                     
                     <div>

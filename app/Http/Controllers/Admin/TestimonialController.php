@@ -25,9 +25,14 @@ class TestimonialController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
-            'is_featured' => 'boolean',
+            'is_featured' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
             'display_order' => 'nullable|integer',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         Testimonial::create($validated);
 
@@ -51,9 +56,14 @@ class TestimonialController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
-            'is_featured' => 'boolean',
+            'is_featured' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
             'display_order' => 'nullable|integer',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         $testimoni->update($validated);
 

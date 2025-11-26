@@ -124,4 +124,17 @@ class HomeController extends Controller
 
         return view('promos', compact('promos'));
     }
+
+    public function testimonials()
+    {
+        $testimonials = Testimonial::where('is_active', true)
+            ->orderBy('display_order')
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        $averageRating = Testimonial::where('is_active', true)->avg('rating');
+        $totalTestimonials = Testimonial::where('is_active', true)->count();
+
+        return view('testimonials', compact('testimonials', 'averageRating', 'totalTestimonials'));
+    }
 }

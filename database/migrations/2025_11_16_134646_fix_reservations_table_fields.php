@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->renameColumn('number_of_people', 'guest_count');
-            $table->renameColumn('special_request', 'special_requests');
-        });
+        // Check if columns need renaming (migration already done or not needed)
+        if (Schema::hasColumn('reservations', 'number_of_people')) {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->renameColumn('number_of_people', 'guest_count');
+            });
+        }
+        
+        if (Schema::hasColumn('reservations', 'special_request')) {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->renameColumn('special_request', 'special_requests');
+            });
+        }
     }
 
     /**

@@ -35,8 +35,11 @@ class PromoController extends Controller
             'valid_until' => 'required|date|after_or_equal:valid_from',
             'terms_conditions' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -80,8 +83,11 @@ class PromoController extends Controller
             'valid_until' => 'required|date|after_or_equal:valid_from',
             'terms_conditions' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+        
+        // Fix checkbox handling
+        $validated['is_active'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
             if ($promo->image) {

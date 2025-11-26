@@ -68,6 +68,14 @@ class Menu extends Model
     }
 
     // Accessor
+    public function getImageUrlAttribute(): string
+    {
+        if (!$this->image) {
+            return asset('img/placeholder-menu.jpg');
+        }
+        return asset('storage/' . $this->image);
+    }
+    
     public function getFormattedPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');

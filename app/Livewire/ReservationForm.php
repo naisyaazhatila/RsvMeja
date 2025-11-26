@@ -164,20 +164,37 @@ class ReservationForm extends Component
         try {
             $dpAmount = setting('dp_amount', 100000);
             
-            $reservation = Reservation::create([
-                'user_id' => auth()->id(),
-                'customer_name' => $this->customer_name,
-                'customer_email' => $this->customer_email,
-                'customer_phone' => $this->customer_phone,
-                'reservation_date' => $this->reservation_date,
-                'reservation_time' => $this->reservation_time,
-                'guest_count' => $this->guest_count,
-                'table_id' => $this->table_id,
-                'special_requests' => $this->special_requests,
-                'status' => 'pending',
-                'dp_amount' => $dpAmount,
-                'payment_status' => 'unpaid',
-            ]);
+            // Use database transaction with pessimistic locking to prevent double booking
+            $reservation = \DB::transaction(function() use ($dpAmount) {
+                // Lock the table row to prevent concurrent bookings
+                $table = \App\Models\Table::lockForUpdate()->find($this->table_id);
+                
+                // Check if table is still available for this time slot
+                $existingReservation = Reservation::where('table_id', $this->table_id)
+                    ->where('reservation_date', $this->reservation_date)
+                    ->where('reservation_time', $this->reservation_time)
+                    ->whereIn('status', ['pending', 'confirmed'])
+                    ->exists();
+                
+                if ($existingReservation) {
+                    throw new \Exception('Maaf, meja ini sudah dibooking untuk waktu tersebut. Silakan pilih meja atau waktu lain.');
+                }
+                
+                return Reservation::create([
+                    'user_id' => auth()->id(),
+                    'customer_name' => $this->customer_name,
+                    'customer_email' => $this->customer_email,
+                    'customer_phone' => $this->customer_phone,
+                    'reservation_date' => $this->reservation_date,
+                    'reservation_time' => $this->reservation_time,
+                    'guest_count' => $this->guest_count,
+                    'table_id' => $this->table_id,
+                    'special_requests' => $this->special_requests,
+                    'status' => 'pending',
+                    'dp_amount' => $dpAmount,
+                    'payment_status' => 'unpaid',
+                ]);
+            });
 
             // Send confirmation email to customer
             \Mail::to($reservation->customer_email)->send(new \App\Mail\ReservationCreated($reservation));
