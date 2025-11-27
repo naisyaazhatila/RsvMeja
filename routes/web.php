@@ -102,3 +102,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 */
 
 require __DIR__.'/auth.php';
+.
