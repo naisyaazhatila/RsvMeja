@@ -122,23 +122,6 @@
                 <div class="space-y-4">
                     <h3 class="font-bold text-xl mb-4 text-bark-900">Transfer ke Rekening:</h3>
                     
-                    <!-- Bank BCA -->
-                    <div class="bg-blue-50 rounded-lg p-5 border-2 border-blue-200">
-                        <div class="flex items-center gap-4">
-                            <div class="w-20 h-20 bg-white rounded-lg flex items-center justify-center border-2 border-blue-300 p-3 flex-shrink-0">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/2560px-Bank_Central_Asia.svg.png" alt="BCA" class="w-full h-full object-contain">
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm text-gray-600 font-medium mb-1">Bank Central Asia</p>
-                                <p class="font-bold text-2xl text-bark-900 mb-1">1234567890</p>
-                                <p class="text-sm text-gray-600">a.n. Asya's Kitchen</p>
-                            </div>
-                            <button onclick="copyToClipboard('1234567890')" class="px-4 py-2 bg-white text-wood-600 rounded-lg hover:bg-cream-100 transition font-semibold text-sm">
-                                Copy
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Bank Mandiri -->
                     <div class="bg-yellow-50 rounded-lg p-5 border-2 border-yellow-200">
                         <div class="flex items-center gap-4">
@@ -151,23 +134,6 @@
                                 <p class="text-sm text-gray-600">a.n. Asya's Kitchen</p>
                             </div>
                             <button onclick="copyToClipboard('9876543210')" class="px-4 py-2 bg-white text-wood-600 rounded-lg hover:bg-cream-100 transition font-semibold text-sm">
-                                Copy
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Bank BNI -->
-                    <div class="bg-orange-50 rounded-lg p-5 border-2 border-orange-200">
-                        <div class="flex items-center gap-4">
-                            <div class="w-20 h-20 bg-white rounded-lg flex items-center justify-center border-2 border-orange-300 p-3 flex-shrink-0">
-                                <img src="https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/2560px-BNI_logo.svg.png" alt="BNI" class="w-full h-full object-contain">
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p class="text-sm text-gray-600 font-medium mb-1">Bank Negara Indonesia</p>
-                                <p class="font-bold text-2xl text-bark-900 mb-1">5555666677</p>
-                                <p class="text-sm text-gray-600">a.n. Asya's Kitchen</p>
-                            </div>
-                            <button onclick="copyToClipboard('5555666677')" class="px-4 py-2 bg-white text-wood-600 rounded-lg hover:bg-cream-100 transition font-semibold text-sm">
                                 Copy
                             </button>
                         </div>
