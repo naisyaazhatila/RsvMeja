@@ -29,7 +29,7 @@
                     <div>
                         <h3 class="font-bold text-lg text-yellow-800 mb-2">Penting!</h3>
                         <p class="text-yellow-700">
-                            Untuk mengonfirmasi reservasi Anda, silakan lakukan pembayaran DP (Down Payment) sebesar <strong>{{ $dpPercentage }}%</strong> dari estimasi total.
+                            Untuk mengonfirmasi reservasi Anda, silakan lakukan pembayaran DP (Down Payment).
                             Reservasi Anda akan dikonfirmasi setelah pembayaran DP diverifikasi oleh tim kami.
                         </p>
                     </div>
@@ -46,6 +46,7 @@
                     <div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase mb-1">Kode Booking</h3>
                         <p class="text-lg font-bold text-bark-900">{{ $reservation->booking_code }}</p>
+                        <p class="text-xs text-gray-500 mt-1">Dibuat: {{ $reservation->created_at->format('d M Y H:i') }} WIB</p>
                     </div>
                     
                     <div>
@@ -112,7 +113,7 @@
                 
                 <div class="bg-wood-50 rounded-lg p-6 mb-6 border-2 border-wood-200">
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-bark-900 font-semibold text-lg">Jumlah DP ({{ $dpPercentage }}%)</span>
+                        <span class="text-bark-900 font-semibold text-lg">Jumlah DP</span>
                         <span class="text-3xl font-bold text-wood-600">Rp {{ number_format($dpAmount, 0, ',', '.') }}</span>
                     </div>
                     <p class="text-sm text-gray-700">* Sisa pembayaran dapat dilakukan di tempat saat kedatangan</p>

@@ -19,7 +19,8 @@
                     @if($reservation->status === 'pending') bg-yellow-50
                     @elseif($reservation->status === 'confirmed') bg-green-50
                     @elseif($reservation->status === 'cancelled') bg-red-50
-                    @else bg-blue-50 @endif">
+                    @elseif($reservation->status === 'completed') bg-blue-50
+                    @else bg-gray-50 @endif">
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold">{{ $reservation->booking_code }}</h2>
@@ -38,8 +39,12 @@
                                 <span class="px-4 py-2 inline-flex text-sm font-semibold rounded-full bg-red-100 text-red-800">
                                     Dibatalkan
                                 </span>
-                            @else
+                            @elseif($reservation->status === 'completed')
                                 <span class="px-4 py-2 inline-flex text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    ✓ Selesai
+                                </span>
+                            @else
+                                <span class="px-4 py-2 inline-flex text-sm font-semibold rounded-full bg-gray-100 text-gray-800">
                                     {{ ucfirst($reservation->status) }}
                                 </span>
                             @endif
@@ -205,13 +210,31 @@
                 <!-- Actions -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
                     @if($reservation->status === 'pending')
-                        <form action="{{ route('admin.reservasi.confirm', $reservation) }}" method="POST">
+                        <button type="button" onclick="openConfirmModal()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Konfirmasi Reservasi
+                        </button>
+                        <form action="{{ route('admin.reservasi.cancel', $reservation) }}" method="POST">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
-                                Konfirmasi Reservasi
+                                Batalkan Reservasi
+                            </button>
+                        </form>
+                    @endif
+
+                    @if($reservation->status === 'confirmed')
+                        <form action="{{ route('admin.reservasi.complete', $reservation) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Selesai
                             </button>
                         </form>
                         <form action="{{ route('admin.reservasi.cancel', $reservation) }}" method="POST">
@@ -239,4 +262,81 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Konfirmasi -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 text-center mb-4">Konfirmasi Reservasi</h3>
+                
+                <form id="confirmForm" action="{{ route('admin.reservasi.confirm', $reservation) }}" method="POST">
+                    @csrf
+                    
+                    <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <p class="text-sm text-blue-800 mb-3">
+                            <strong>Meja:</strong> {{ $reservation->table->name }} ({{ $reservation->table->capacity }} orang)
+                        </p>
+                        <p class="text-sm text-blue-800">
+                            <strong>Tanggal:</strong> {{ $reservation->reservation_date->format('d F Y') }}
+                        </p>
+                    </div>
+
+                    <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" name="deactivate_table" id="deactivate_table" value="1"
+                                       class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="deactivate_table" class="font-medium text-gray-700">Non-aktifkan Meja {{ $reservation->table->name }}</label>
+                                <p class="text-gray-600 mt-1">Meja tidak akan tersedia untuk booking baru sampai reservasi ini selesai</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeConfirmModal()" 
+                                class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md hover:bg-gray-400 focus:outline-none">
+                            Batal
+                        </button>
+                        <button type="submit" 
+                                class="flex-1 px-4 py-2 bg-green-600 text-white text-base font-medium rounded-md hover:bg-green-700 focus:outline-none">
+                            Konfirmasi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConfirmModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeConfirmModal();
+            }
+        });
+    </script>
 </x-admin-layout>

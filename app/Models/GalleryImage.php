@@ -42,11 +42,8 @@ class GalleryImage extends Model
         if (!$this->image_path) {
             return asset('img/placeholder-gallery.jpg');
         }
-        // Handle both formats: with or without 'storage/' prefix
-        if (str_starts_with($this->image_path, 'storage/')) {
-            return asset($this->image_path);
-        }
-        return asset('storage/' . $this->image_path);
+        // Return direct asset path
+        return asset($this->image_path);
     }
 
     public function getThumbnailUrlAttribute(): string
@@ -54,9 +51,7 @@ class GalleryImage extends Model
         if (!$this->thumbnail_path) {
             return $this->image_url;
         }
-        if (str_starts_with($this->thumbnail_path, 'storage/')) {
-            return asset($this->thumbnail_path);
-        }
-        return asset('storage/' . $this->thumbnail_path);
+        // Return direct asset path
+        return asset($this->thumbnail_path);
     }
 }

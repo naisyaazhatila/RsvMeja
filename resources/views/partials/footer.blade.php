@@ -163,9 +163,9 @@
 
                 <!-- Social Media Links -->
                 <div class="flex space-x-4">
-                    @if(setting('social_instagram'))
+                    @if(setting('instagram_url'))
                         <a
-                            href="{{ setting('social_instagram') }}"
+                            href="{{ setting('instagram_url') }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="w-12 h-12 bg-wood-500/20 hover:bg-wood-500 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 group"
@@ -177,9 +177,9 @@
                         </a>
                     @endif
 
-                    @if(setting('social_facebook'))
+                    @if(setting('facebook_url'))
                         <a
-                            href="{{ setting('social_facebook') }}"
+                            href="{{ setting('facebook_url') }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="w-12 h-12 bg-wood-500/20 hover:bg-wood-500 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 group"
@@ -191,9 +191,9 @@
                         </a>
                     @endif
 
-                    @if(setting('social_whatsapp'))
+                    @if(setting('whatsapp_number'))
                         <a
-                            href="https://wa.me/{{ setting('social_whatsapp') }}"
+                            href="https://wa.me/{{ setting('whatsapp_number') }}"
                             target="_blank"
                             rel="noopener noreferrer"
                             class="w-12 h-12 bg-wood-500/20 hover:bg-wood-500 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 group"

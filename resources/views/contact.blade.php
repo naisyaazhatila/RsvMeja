@@ -158,8 +158,8 @@
                         <h2 class="text-2xl font-heading font-bold text-bark-900 mb-6">Ikuti Kami</h2>
                         
                         <div class="flex space-x-4">
-                            @if(setting('whatsapp'))
-                            <a href="{{ whatsapp_link(setting('whatsapp'), 'Halo, saya ingin bertanya tentang restaurant') }}" 
+                            @if(setting('whatsapp_number'))
+                            <a href="{{ whatsapp_link(setting('whatsapp_number'), 'Halo, saya ingin bertanya tentang restaurant') }}" 
                                target="_blank"
                                class="w-12 h-12 bg-green-500 hover:bg-green-600 rounded-lg flex items-center justify-center text-white transition-colors duration-300">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -168,8 +168,8 @@
                             </a>
                             @endif
 
-                            @if(setting('instagram'))
-                            <a href="{{ setting('instagram') }}" 
+                            @if(setting('instagram_url'))
+                            <a href="{{ setting('instagram_url') }}" 
                                target="_blank"
                                class="w-12 h-12 bg-pink-500 hover:bg-pink-600 rounded-lg flex items-center justify-center text-white transition-colors duration-300">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -178,8 +178,8 @@
                             </a>
                             @endif
 
-                            @if(setting('facebook'))
-                            <a href="{{ setting('facebook') }}" 
+                            @if(setting('facebook_url'))
+                            <a href="{{ setting('facebook_url') }}" 
                                target="_blank"
                                class="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center text-white transition-colors duration-300">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

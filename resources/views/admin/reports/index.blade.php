@@ -177,8 +177,8 @@
                                     <div class="text-sm text-gray-500">{{ $reservation->reservation_time }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm font-medium text-gray-900">{{ $reservation->name }}</div>
-                                    <div class="text-sm text-gray-500">{{ $reservation->email }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $reservation->customer_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $reservation->customer_email }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $reservation->guest_count }} orang

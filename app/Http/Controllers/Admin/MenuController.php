@@ -5,16 +5,28 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{Menu, MenuCategory};
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $menus = Menu::with('category')->latest()->paginate(20)->withQueryString();
+        $query = Menu::with('category');
+        
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        
+        // Search by menu name
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        
+        $menus = $query->latest()->paginate(20)->withQueryString();
         $categories = MenuCategory::where('is_active', true)->orderBy('name')->get();
+        
         return view('admin.menus.index', compact('menus', 'categories'));
     }
 
@@ -55,10 +67,10 @@ class MenuController extends Controller
             $img = Image::read($image);
             $img->cover(800, 600);
             
-            $path = 'menus/' . $filename;
-            Storage::put($path, $img->encode());
+            $path = public_path('uploads/menus/' . $filename);
+            file_put_contents($path, $img->encode());
             
-            $validated['image'] = $path;
+            $validated['image'] = 'uploads/menus/' . $filename;
         }
 
         Menu::create($validated);
@@ -127,8 +139,8 @@ class MenuController extends Controller
 
     public function destroy(Menu $menu)
     {
-        if ($menu->image) {
-            Storage::delete($menu->image);
+        if ($menu->image && file_exists(public_path($menu->image))) {
+            unlink(public_path($menu->image));
         }
 
         $menu->delete();

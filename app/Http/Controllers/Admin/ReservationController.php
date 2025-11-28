@@ -47,12 +47,13 @@ class ReservationController extends Controller
         return view('admin.reservations.show', compact('reservation'));
     }
 
-    public function confirm(Reservation $reservation)
+    public function confirm(Reservation $reservation, Request $request)
     {
         if ($reservation->status === 'confirmed') {
             return redirect()->back()->with('info', 'Reservasi sudah dikonfirmasi sebelumnya');
         }
         
+        // Update reservation status
         $reservation->update([
             'status' => 'confirmed',
             'confirmed_at' => now(),
@@ -61,12 +62,24 @@ class ReservationController extends Controller
             'payment_confirmed_at' => now(),
         ]);
         
+        // Non-aktifkan meja jika admin mencentang checkbox
+        // Logic sama seperti di TableController edit
+        if ($request->has('deactivate_table')) {
+            $reservation->table->update([
+                'is_active' => false
+            ]);
+            
+            $tableMessage = ' dan meja ' . $reservation->table->name . ' telah di-non-aktifkan';
+        } else {
+            $tableMessage = '';
+        }
+        
         // Send confirmation email to customer
         try {
             \Mail::to($reservation->customer_email)->send(new \App\Mail\ReservationConfirmed($reservation));
-            return redirect()->back()->with('success', 'Reservasi dan pembayaran berhasil dikonfirmasi. Email telah dikirim ke pelanggan');
+            return redirect()->back()->with('success', 'Reservasi dan pembayaran berhasil dikonfirmasi' . $tableMessage . '. Email telah dikirim ke pelanggan');
         } catch (\Exception $e) {
-            return redirect()->back()->with('warning', 'Reservasi dikonfirmasi tapi gagal mengirim email: ' . $e->getMessage());
+            return redirect()->back()->with('warning', 'Reservasi dikonfirmasi' . $tableMessage . ' tapi gagal mengirim email: ' . $e->getMessage());
         }
     }
 
@@ -100,7 +113,12 @@ class ReservationController extends Controller
         
         $reservation->update(['status' => 'completed']);
         
-        return redirect()->back()->with('success', 'Reservasi berhasil diselesaikan');
+        // Auto-aktifkan kembali meja setelah reservasi selesai
+        $reservation->table->update([
+            'is_active' => true
+        ]);
+        
+        return redirect()->back()->with('success', 'Reservasi berhasil diselesaikan dan meja ' . $reservation->table->name . ' telah diaktifkan kembali');
     }
 
     public function destroy(Reservation $reservation)

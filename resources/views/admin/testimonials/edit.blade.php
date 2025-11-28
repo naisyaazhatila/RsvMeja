@@ -59,20 +59,6 @@
                         @enderror
                     </div>
 
-                    <!-- Is Featured Checkbox -->
-                    <div class="mb-6">
-                        <div class="flex items-start">
-                            <div class="flex items-center h-5">
-                                <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured', $testimonial->is_featured) ? 'checked' : '' }}
-                                       class="w-4 h-4 text-wood-600 border-gray-300 rounded focus:ring-wood-500">
-                            </div>
-                            <div class="ml-3 text-sm">
-                                <label for="is_featured" class="font-medium text-gray-700">Featured</label>
-                                <p class="text-gray-500">Tampilkan di halaman utama</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Buttons -->
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
                         <a href="{{ route('admin.testimoni.index') }}" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold rounded-lg transition duration-200">

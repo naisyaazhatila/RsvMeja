@@ -32,7 +32,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
                     <!-- Image -->
                     <div>
-                        <img src="{{ $menu->image ? Storage::url($menu->image) : asset('images/no-image.jpg') }}" 
+                        <img src="{{ $menu->image ? asset($menu->image) : asset('images/no-image.jpg') }}" 
                              alt="{{ $menu->name }}" 
                              class="w-full h-96 object-cover rounded-lg">
                     </div>

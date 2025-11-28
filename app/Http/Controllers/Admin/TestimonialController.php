@@ -10,8 +10,7 @@ class TestimonialController extends Controller
 {
     public function index()
     {
-        $testimonials = Testimonial::latest()->paginate(20)->withQueryString();
-        return view('admin.testimonials.index', compact('testimonials'));
+        return view('admin.testimonials.index');
     }
 
     public function create()
@@ -25,10 +24,25 @@ class TestimonialController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
             'display_order' => 'nullable|integer',
         ]);
+        
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            $image = $request->file('photo');
+            $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
+            
+            $img = \Intervention\Image\Laravel\Facades\Image::read($image);
+            $img->cover(200, 200);
+            
+            $path = public_path('uploads/testimonials/' . $filename);
+            file_put_contents($path, $img->encode());
+            
+            $validated['photo'] = 'uploads/testimonials/' . $filename;
+        }
         
         // Fix checkbox handling
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
@@ -56,10 +70,30 @@ class TestimonialController extends Controller
             'customer_name' => 'required|string|max:255',
             'comment' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'is_featured' => 'nullable|boolean',
             'is_active' => 'nullable|boolean',
             'display_order' => 'nullable|integer',
         ]);
+        
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo
+            if ($testimoni->photo && file_exists(public_path($testimoni->photo))) {
+                unlink(public_path($testimoni->photo));
+            }
+            
+            $image = $request->file('photo');
+            $filename = time() . '_' . \Illuminate\Support\Str::random(10) . '.' . $image->getClientOriginalExtension();
+            
+            $img = \Intervention\Image\Laravel\Facades\Image::read($image);
+            $img->cover(200, 200);
+            
+            $path = public_path('uploads/testimonials/' . $filename);
+            file_put_contents($path, $img->encode());
+            
+            $validated['photo'] = 'uploads/testimonials/' . $filename;
+        }
         
         // Fix checkbox handling
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
@@ -73,6 +107,11 @@ class TestimonialController extends Controller
 
     public function destroy(Testimonial $testimoni)
     {
+        // Delete photo if exists
+        if ($testimoni->photo && file_exists(public_path($testimoni->photo))) {
+            unlink(public_path($testimoni->photo));
+        }
+        
         $testimoni->delete();
 
         return redirect()->route('admin.testimoni.index')

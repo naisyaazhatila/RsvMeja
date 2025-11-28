@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.3s="refreshTables">
     <!-- Hero Section -->
     <section class="relative bg-gradient-to-br from-bark-900 to-wood-800 text-cream-100 py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -159,11 +159,19 @@
                     
                     @if(count($availableTables) > 0)
                     
+                    <!-- Real-time Update Notice -->
+                    <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center">
+                        <svg class="w-5 h-5 text-blue-600 mr-2 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm text-blue-800 font-medium">Status meja diperbarui otomatis setiap 5 detik</span>
+                    </div>
+                    
                     <!-- Legend -->
                     <div class="flex flex-wrap gap-4 mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="flex items-center">
                             <div class="w-6 h-6 bg-green-500 rounded mr-2"></div>
-                            <span class="text-sm font-medium text-gray-700">Tersedia untuk Anda ({{ $guest_count }} orang)</span>
+                            <span class="text-sm font-medium text-gray-700">Tersedia untuk Anda</span>
                         </div>
                         <div class="flex items-center">
                             <div class="w-6 h-6 bg-wood-500 rounded mr-2 ring-4 ring-wood-200"></div>
@@ -171,7 +179,7 @@
                         </div>
                         <div class="flex items-center">
                             <div class="w-6 h-6 bg-gray-400 rounded mr-2"></div>
-                            <span class="text-sm font-medium text-gray-700">Tidak Tersedia</span>
+                            <span class="text-sm font-medium text-gray-700">Sudah Dibooking</span>
                         </div>
                     </div>
 
@@ -197,40 +205,22 @@
 
                         <!-- Tables Layout -->
                         <div class="mb-8">
-                            @php
-                                // Get all tables (both available and unavailable for current guest count)
-                                $allTables = \App\Models\Table::where('is_active', true)
-                                    ->orderBy('capacity')
-                                    ->orderBy('table_number')
-                                    ->get();
-                                
-                                // Check which tables are booked for the selected date/time
-                                $bookedTableIds = \App\Models\Reservation::where('reservation_date', $this->reservation_date)
-                                    ->where('reservation_time', $this->reservation_time)
-                                    ->whereIn('status', ['pending', 'confirmed'])
-                                    ->pluck('table_id')
-                                    ->toArray();
-                                
-                                $availableTableIds = $availableTables->pluck('id')->toArray();
-                            @endphp
-
                             <!-- Tables Grid - 3 columns layout -->
                             <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-                                @foreach($allTables as $index => $table)
+                                @foreach($availableTables as $index => $table)
                                 @php
-                                    $isBooked = in_array($table->id, $bookedTableIds);
-                                    $isAvailableForGuest = in_array($table->id, $availableTableIds);
+                                    $isBooked = $table->is_reserved ?? false;
                                     $isSelected = $table_id == $table->id;
-                                    $canSelect = $isAvailableForGuest && !$isBooked;
+                                    $canSelect = !$isBooked;
                                 @endphp
                                 
                                 <div class="group {{ $canSelect ? 'cursor-pointer' : 'cursor-not-allowed' }}"
-                                     @if($canSelect) wire:click="$set('table_id', {{ $table->id }})" @endif>
+                                     @if($canSelect) wire:click="selectTable({{ $table->id }})" @endif>
                                     
                                     <!-- Table Card -->
-                                    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border-2
-                                        {{ $isSelected ? 'border-wood-500 shadow-2xl scale-105' : 
-                                           ($canSelect ? 'border-green-500 hover:scale-102' : 'border-gray-300 opacity-75') }}">
+                                    <div class="bg-white rounded-2xl shadow-md transition-all duration-300 overflow-hidden border-2
+                                        {{ $isSelected ? 'border-wood-500 shadow-2xl scale-105 ring-4 ring-wood-200' : 
+                                           ($canSelect ? 'border-green-500 hover:scale-102 hover:shadow-xl' : 'border-gray-300 opacity-60 bg-gray-50') }}">
                                         
                                         <!-- Header Section -->
                                         <div class="relative h-32 flex items-center justify-center
@@ -360,7 +350,7 @@
                         <!-- Selected Table Info -->
                         @if($table_id)
                         @php
-                            $selectedTable = $allTables->firstWhere('id', $table_id);
+                            $selectedTable = $availableTables->firstWhere('id', $table_id);
                         @endphp
                         @if($selectedTable)
                         <div class="mt-8 bg-wood-500 text-white p-6 rounded-xl shadow-lg">
@@ -518,4 +508,5 @@
         </div>
     </section>
 </div>
+
 

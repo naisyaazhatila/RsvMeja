@@ -79,7 +79,7 @@
                         @forelse($menus as $menu)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <img src="{{ $menu->image ? Storage::url($menu->image) : asset('images/no-image.jpg') }}" 
+                                    <img src="{{ $menu->image ? asset($menu->image) : asset('images/no-image.jpg') }}" 
                                          alt="{{ $menu->name }}" 
                                          class="w-16 h-16 object-cover rounded-lg">
                                 </td>

@@ -113,16 +113,7 @@ class HomeController extends Controller
 
     public function promos()
     {
-        $promos = Promo::where('is_active', true)
-            ->where('valid_from', '<=', now())
-            ->where(function($q) {
-                $q->whereNull('valid_until')
-                  ->orWhere('valid_until', '>=', now());
-            })
-            ->orderBy('valid_from', 'desc')
-            ->get();
-
-        return view('promos', compact('promos'));
+        return view('promos');
     }
 
     public function testimonials()

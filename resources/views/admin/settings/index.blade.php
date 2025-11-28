@@ -203,7 +203,7 @@
                             <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">Logo Restoran</label>
                             @if(setting('logo'))
                                 <div class="mb-3">
-                                    <img src="{{ Storage::url(setting('logo')) }}" alt="Logo" class="w-32 h-32 object-contain">
+                                    <img src="{{ asset(setting('logo')) }}" alt="Logo" class="w-32 h-32 object-contain">
                                     <p class="mt-1 text-sm text-gray-500">Logo saat ini</p>
                                 </div>
                             @endif

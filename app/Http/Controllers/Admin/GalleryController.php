@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\GalleryImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Str;
 
@@ -37,14 +36,23 @@ class GalleryController extends Controller
             $image = $request->file('image');
             $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
             
+            // Create full-size image
             $img = Image::read($image);
             $img->cover(800, 600);
             
-            $path = 'gallery/' . $filename;
-            Storage::disk('public')->put($path, $img->encode());
+            $path = public_path('uploads/gallery/' . $filename);
+            file_put_contents($path, $img->encode());
             
-            // Store path without 'storage/' prefix - it will be added in view
-            $validated['image_path'] = $path;
+            // Create thumbnail
+            $thumbnailFilename = 'thumb_' . $filename;
+            $thumbnailImg = Image::read($image);
+            $thumbnailImg->cover(300, 225);
+            
+            $thumbnailPath = public_path('uploads/gallery/' . $thumbnailFilename);
+            file_put_contents($thumbnailPath, $thumbnailImg->encode());
+            
+            $validated['image_path'] = 'uploads/gallery/' . $filename;
+            $validated['thumbnail_path'] = 'uploads/gallery/' . $thumbnailFilename;
         }
 
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
@@ -78,22 +86,34 @@ class GalleryController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($galeri->image_path) {
-                Storage::disk('public')->delete($galeri->image_path);
+            // Delete old image and thumbnail
+            if ($galeri->image_path && file_exists(public_path($galeri->image_path))) {
+                unlink(public_path($galeri->image_path));
+            }
+            if ($galeri->thumbnail_path && file_exists(public_path($galeri->thumbnail_path))) {
+                unlink(public_path($galeri->thumbnail_path));
             }
 
             $image = $request->file('image');
             $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
             
+            // Create full-size image
             $img = Image::read($image);
             $img->cover(800, 600);
             
-            $path = 'gallery/' . $filename;
-            Storage::disk('public')->put($path, $img->encode());
+            $path = public_path('uploads/gallery/' . $filename);
+            file_put_contents($path, $img->encode());
             
-            // Store path without 'storage/' prefix
-            $validated['image_path'] = $path;
+            // Create thumbnail
+            $thumbnailFilename = 'thumb_' . $filename;
+            $thumbnailImg = Image::read($image);
+            $thumbnailImg->cover(300, 225);
+            
+            $thumbnailPath = public_path('uploads/gallery/' . $thumbnailFilename);
+            file_put_contents($thumbnailPath, $thumbnailImg->encode());
+            
+            $validated['image_path'] = 'uploads/gallery/' . $filename;
+            $validated['thumbnail_path'] = 'uploads/gallery/' . $thumbnailFilename;
         }
 
         $validated['is_active'] = $request->has('is_active') ? 1 : 0;
@@ -107,8 +127,11 @@ class GalleryController extends Controller
 
     public function destroy(GalleryImage $galeri)
     {
-        if ($galeri->image_path) {
-            Storage::delete($galeri->image_path);
+        if ($galeri->image_path && file_exists(public_path($galeri->image_path))) {
+            unlink(public_path($galeri->image_path));
+        }
+        if ($galeri->thumbnail_path && file_exists(public_path($galeri->thumbnail_path))) {
+            unlink(public_path($galeri->thumbnail_path));
         }
 
         $galeri->delete();
@@ -130,16 +153,26 @@ class GalleryController extends Controller
             foreach ($request->file('images') as $image) {
                 $filename = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
                 
+                // Create full-size image
                 $img = Image::read($image);
                 $img->cover(800, 600);
                 
-                $path = 'gallery/' . $filename;
-                Storage::put($path, $img->encode());
+                $path = public_path('uploads/gallery/' . $filename);
+                file_put_contents($path, $img->encode());
+                
+                // Create thumbnail
+                $thumbnailFilename = 'thumb_' . $filename;
+                $thumbnailImg = Image::read($image);
+                $thumbnailImg->cover(300, 225);
+                
+                $thumbnailPath = public_path('uploads/gallery/' . $thumbnailFilename);
+                file_put_contents($thumbnailPath, $thumbnailImg->encode());
                 
                 GalleryImage::create([
                     'title' => 'Gallery Image ' . time(),
                     'category' => $request->category,
-                    'image_path' => $path,
+                    'image_path' => 'uploads/gallery/' . $filename,
+                    'thumbnail_path' => 'uploads/gallery/' . $thumbnailFilename,
                     'is_active' => true,
                 ]);
 

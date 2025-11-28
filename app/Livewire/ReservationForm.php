@@ -91,6 +91,7 @@ class ReservationForm extends Component
 
         if ($this->currentStep < $this->totalSteps) {
             $this->currentStep++;
+            $this->dispatch('currentStepChanged', $this->currentStep);
         }
     }
 
@@ -98,6 +99,7 @@ class ReservationForm extends Component
     {
         if ($this->currentStep > 1) {
             $this->currentStep--;
+            $this->dispatch('currentStepChanged', $this->currentStep);
         }
     }
 
@@ -127,6 +129,29 @@ class ReservationForm extends Component
                 'table_id' => 'required|exists:tables,id',
             ]);
             
+            // Real-time check with database lock: Validate that selected table is still available
+            // Check for ANY active reservation (pending/confirmed) on the same date
+            $isTableReserved = \DB::transaction(function() {
+                return Reservation::lockForUpdate()
+                    ->where('table_id', $this->table_id)
+                    ->where('reservation_date', $this->reservation_date)
+                    ->whereIn('status', ['pending', 'confirmed'])
+                    ->exists();
+            });
+            
+            if ($isTableReserved) {
+                // Refresh table list
+                $this->loadAvailableTables();
+                $this->table_id = null; // Reset selection
+                
+                $this->addError('table_id', 'Maaf, meja ini sudah dibooking untuk tanggal tersebut. Meja akan tersedia kembali setelah reservasi selesai. Silakan pilih meja lain.');
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], []),
+                    null,
+                    null
+                );
+            }
+            
             // Validate that selected table has sufficient capacity
             $selectedTable = Table::find($this->table_id);
             if ($selectedTable && $selectedTable->capacity < $this->guest_count) {
@@ -143,18 +168,68 @@ class ReservationForm extends Component
     public function loadAvailableTables()
     {
         if ($this->reservation_date && $this->reservation_time && $this->guest_count) {
-            $this->availableTables = Table::where('capacity', '>=', $this->guest_count)
+            // Get all tables with enough capacity
+            $allTables = Table::where('capacity', '>=', $this->guest_count)
                 ->where('is_active', true)
-                ->whereNotIn('id', function($query) {
-                    $query->select('table_id')
-                        ->from('reservations')
-                        ->where('reservation_date', $this->reservation_date)
-                        ->where('reservation_time', $this->reservation_time)
-                        ->whereIn('status', ['pending', 'confirmed']);
-                })
                 ->orderBy('capacity')
                 ->get();
+            
+            // Get reserved table IDs - Block tables that have active reservations (pending/confirmed) 
+            // on the same date, regardless of time
+            $reservedTableIds = Reservation::where('reservation_date', $this->reservation_date)
+                ->whereIn('status', ['pending', 'confirmed'])
+                ->pluck('table_id')
+                ->toArray();
+            
+            // Mark tables as available or reserved
+            $this->availableTables = $allTables->map(function($table) use ($reservedTableIds) {
+                $table->is_reserved = in_array($table->id, $reservedTableIds);
+                return $table;
+            });
         }
+    }
+    
+    // Method untuk refresh tables secara berkala (dipanggil dari frontend via wire:poll)
+    public function refreshTables()
+    {
+        // Only refresh when on step 3 (table selection) and not in other steps
+        if ($this->currentStep === 3 && $this->reservation_date && $this->reservation_time && $this->guest_count) {
+            $this->loadAvailableTables();
+        }
+    }
+
+    // Method untuk set table dengan validasi real-time
+    public function selectTable($tableId)
+    {
+        // Check if table is active
+        $table = Table::find($tableId);
+        
+        if (!$table || !$table->is_active) {
+            // Refresh table list
+            $this->loadAvailableTables();
+            $this->table_id = null;
+            
+            session()->flash('error', 'Maaf, meja ini sedang tidak aktif. Silakan pilih meja lain.');
+            return;
+        }
+        
+        // Real-time check apakah meja masih available
+        $isReserved = Reservation::where('table_id', $tableId)
+            ->where('reservation_date', $this->reservation_date)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->exists();
+        
+        if ($isReserved) {
+            // Refresh table list
+            $this->loadAvailableTables();
+            $this->table_id = null;
+            
+            session()->flash('error', 'Maaf, meja ini baru saja dibooking oleh pengguna lain. Silakan pilih meja lain.');
+            return;
+        }
+        
+        // Set table jika masih available
+        $this->table_id = $tableId;
     }
 
     public function submit()
@@ -164,21 +239,37 @@ class ReservationForm extends Component
         try {
             $dpAmount = setting('dp_amount', 100000);
             
-            // Use database transaction with pessimistic locking to prevent double booking
-            $reservation = \DB::transaction(function() use ($dpAmount) {
-                // Lock the table row to prevent concurrent bookings
-                $table = \App\Models\Table::lockForUpdate()->find($this->table_id);
-                
-                // Check if table is still available for this time slot
-                $existingReservation = Reservation::where('table_id', $this->table_id)
-                    ->where('reservation_date', $this->reservation_date)
-                    ->where('reservation_time', $this->reservation_time)
-                    ->whereIn('status', ['pending', 'confirmed'])
-                    ->exists();
-                
-                if ($existingReservation) {
-                    throw new \Exception('Maaf, meja ini sudah dibooking untuk waktu tersebut. Silakan pilih meja atau waktu lain.');
-                }
+            // Create unique lock key for this table and date
+            $lockKey = "reservation_lock_{$this->table_id}_{$this->reservation_date}";
+            
+            // Try to acquire lock (10 second timeout)
+            $lock = \Cache::lock($lockKey, 10);
+            
+            if (!$lock->get()) {
+                throw new \Exception('Meja sedang diproses oleh pengguna lain. Silakan tunggu beberapa saat dan coba lagi.');
+            }
+            
+            try {
+                // Use database transaction
+                $reservation = \DB::transaction(function() use ($dpAmount) {
+                    // Triple-check if table is still available
+                    $existingReservation = Reservation::where('table_id', $this->table_id)
+                        ->where('reservation_date', $this->reservation_date)
+                        ->whereIn('status', ['pending', 'confirmed'])
+                        ->first();
+                    
+                    if ($existingReservation) {
+                        throw new \Exception('Maaf, meja ini sudah dibooking untuk tanggal tersebut oleh ' . $existingReservation->customer_name . '. Meja akan tersedia setelah reservasi selesai. Silakan pilih meja lain.');
+                    }
+                    
+                    // Verify table exists and is active
+                    $table = \App\Models\Table::where('id', $this->table_id)
+                        ->where('is_active', true)
+                        ->first();
+                    
+                    if (!$table) {
+                        throw new \Exception('Meja tidak ditemukan atau tidak aktif.');
+                    }
                 
                 return Reservation::create([
                     'user_id' => auth()->id(),
@@ -226,11 +317,29 @@ class ReservationForm extends Component
             session()->flash('wa_url', $waUrl);
             session()->flash('booking_code', $reservation->booking_code);
             
-            // Redirect to payment instruction page instead of my-reservations
-            return redirect()->route('payment.instruction', ['bookingCode' => $reservation->booking_code]);
+                // Redirect to payment instruction page instead of my-reservations
+                return redirect()->route('payment.instruction', ['bookingCode' => $reservation->booking_code]);
+                
+            } finally {
+                // Always release the lock
+                optional($lock)->release();
+            }
 
         } catch (\Exception $e) {
+            // Refresh available tables after error
+            $this->loadAvailableTables();
+            $this->table_id = null;
+            
+            // Log error for debugging
+            \Log::error('Reservation submission failed', [
+                'error' => $e->getMessage(),
+                'table_id' => $this->table_id,
+                'date' => $this->reservation_date,
+                'user_id' => auth()->id(),
+            ]);
+            
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            $this->currentStep = 3; // Back to table selection
         }
     }
 

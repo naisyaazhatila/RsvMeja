@@ -86,7 +86,7 @@
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300">
                     <div class="relative overflow-hidden h-48">
                         @if($menu->image)
-                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                        <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                         @else
                         <div class="w-full h-full bg-gradient-to-br from-wood-400 to-wood-600 flex items-center justify-center">
                             <svg class="w-20 h-20 text-cream-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,7 +137,7 @@
                 <div class="relative bg-gradient-to-br from-wood-500 to-wood-700 rounded-lg overflow-hidden shadow-xl group hover:shadow-2xl transition-all">
                     @if($promo->image)
                     <div class="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity">
-                        <img src="{{ Storage::url($promo->image) }}" alt="{{ $promo->title }}" class="w-full h-full object-cover">
+                        <img src="{{ asset($promo->image) }}" alt="{{ $promo->title }}" class="w-full h-full object-cover">
                     </div>
                     @endif
                     <div class="relative p-8 text-cream-100">
@@ -222,7 +222,7 @@
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                 @foreach($gallery as $image)
                 <div class="relative overflow-hidden rounded-lg shadow-lg group cursor-pointer aspect-square">
-                    <img src="{{ Storage::url($image->image_path) }}" alt="{{ $image->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                    <img src="{{ asset($image->image_path) }}" alt="{{ $image->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     <div class="absolute inset-0 bg-gradient-to-t from-bark-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                         <div class="p-4 text-cream-100">
                             <h3 class="font-semibold">{{ $image->title }}</h3>

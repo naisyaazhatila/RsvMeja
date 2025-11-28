@@ -18,7 +18,7 @@
 
             <!-- Form -->
             <div class="bg-white rounded-lg shadow-sm p-6">
-                <form action="{{ route('admin.testimoni.store') }}" method="POST">
+                <form action="{{ route('admin.testimoni.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <!-- Customer Name -->
@@ -48,18 +48,29 @@
                         @enderror
                     </div>
 
-                    <!-- Testimonial -->
+                    <!-- Comment -->
                     <div class="mb-6">
-                        <label for="testimonial" class="block text-sm font-medium text-gray-700 mb-2">Testimoni <span class="text-red-500">*</span></label>
-                        <textarea name="testimonial" id="testimonial" rows="6" required
-                                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500 @error('testimonial') border-red-500 @enderror">{{ old('testimonial') }}</textarea>
-                        @error('testimonial')
+                        <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Testimoni <span class="text-red-500">*</span></label>
+                        <textarea name="comment" id="comment" rows="6" required
+                                  class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500 @error('comment') border-red-500 @enderror">{{ old('comment') }}</textarea>
+                        @error('comment')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Is Featured Checkbox -->
+                    <!-- Photo Upload -->
                     <div class="mb-6">
+                        <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">Foto Pelanggan (Opsional)</label>
+                        <input type="file" name="photo" id="photo" accept="image/*"
+                               class="w-full rounded-lg border-gray-300 shadow-sm focus:border-wood-500 focus:ring-wood-500 @error('photo') border-red-500 @enderror">
+                        <p class="mt-1 text-sm text-gray-500">Format: JPG, PNG. Maksimal 2MB</p>
+                        @error('photo')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="mb-6 space-y-4">
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
                                 <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
@@ -68,6 +79,17 @@
                             <div class="ml-3 text-sm">
                                 <label for="is_featured" class="font-medium text-gray-700">Featured</label>
                                 <p class="text-gray-500">Tampilkan di halaman utama</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}
+                                       class="w-4 h-4 text-wood-600 border-gray-300 rounded focus:ring-wood-500">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="is_active" class="font-medium text-gray-700">Aktif</label>
+                                <p class="text-gray-500">Tampilkan testimoni ini di website</p>
                             </div>
                         </div>
                     </div>

@@ -34,14 +34,14 @@ class ReportController extends Controller
         }
         
         // Apply sorting
-        $sortBy = $request->get('sort_by', 'created_at');
+        $sortBy = $request->get('sort_by', 'reservation_date');
         $sortOrder = $request->get('sort_order', 'desc');
         
-        $allowedSortFields = ['created_at', 'reservation_date', 'customer_name', 'status', 'payment_status'];
+        $allowedSortFields = ['created_at', 'reservation_date', 'customer_name', 'status', 'dp_amount'];
         if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $sortOrder);
         } else {
-            $query->latest();
+            $query->orderBy('reservation_date', 'desc');
         }
         
         $reservations = $query->paginate(20)->withQueryString();
@@ -58,11 +58,11 @@ class ReportController extends Controller
         }
         
         $stats = [
-            'total' => (clone $statsQuery)->count(),
+            'total_reservations' => (clone $statsQuery)->count(),
             'confirmed' => (clone $statsQuery)->where('status', 'confirmed')->count(),
             'pending' => (clone $statsQuery)->where('status', 'pending')->count(),
             'cancelled' => (clone $statsQuery)->where('status', 'cancelled')->count(),
-            'revenue' => (clone $statsQuery)->where('payment_status', 'paid')->sum('dp_amount'),
+            'revenue' => (clone $statsQuery)->whereIn('status', ['confirmed', 'completed'])->sum('dp_amount'),
         ];
         
         return view('admin.reports.index', compact('reservations', 'stats'));

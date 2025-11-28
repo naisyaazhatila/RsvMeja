@@ -32,7 +32,7 @@
                 <!-- Image -->
                 @if($promo->image)
                     <div class="w-full h-96">
-                        <img src="{{ Storage::url($promo->image) }}" 
+                        <img src="{{ asset($promo->image) }}" 
                              alt="{{ $promo->title }}" 
                              class="w-full h-full object-cover">
                     </div>

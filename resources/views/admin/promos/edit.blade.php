@@ -71,7 +71,7 @@
                         <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Gambar Promo</label>
                         @if($promo->image)
                             <div class="mb-3">
-                                <img src="{{ Storage::url($promo->image) }}" alt="{{ $promo->title }}" class="w-full h-64 object-cover rounded-lg">
+                                <img src="{{ asset($promo->image) }}" alt="{{ $promo->title }}" class="w-full h-64 object-cover rounded-lg">
                                 <p class="mt-1 text-sm text-gray-500">Gambar saat ini</p>
                             </div>
                         @endif

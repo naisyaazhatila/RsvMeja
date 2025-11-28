@@ -53,28 +53,6 @@
                                 <option value="1" {{ request('vegetarian') == '1' ? 'selected' : '' }}>✓ Hanya Vegetarian</option>
                             </select>
                         </div>
-
-                        <!-- Spicy Filter -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Pedas</label>
-                            <select name="spicy" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-wood-500">
-                                <option value="">Semua</option>
-                                <option value="yes" {{ request('spicy') == 'yes' ? 'selected' : '' }}>🌶️ Pedas</option>
-                                <option value="no" {{ request('spicy') == 'no' ? 'selected' : '' }}>Tidak Pedas</option>
-                            </select>
-                        </div>
-
-                        <!-- Spicy Level Filter -->
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Level Pedas</label>
-                            <select name="spicy_level" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-wood-500">
-                                <option value="">Semua Level</option>
-                                <option value="mild" {{ request('spicy_level') == 'mild' ? 'selected' : '' }}>🌶️ Mild</option>
-                                <option value="medium" {{ request('spicy_level') == 'medium' ? 'selected' : '' }}>🌶️🌶️ Medium</option>
-                                <option value="hot" {{ request('spicy_level') == 'hot' ? 'selected' : '' }}>🌶️🌶️🌶️ Hot</option>
-                                <option value="extra_hot" {{ request('spicy_level') == 'extra_hot' ? 'selected' : '' }}>🌶️🌶️🌶️🌶️ Extra Hot</option>
-                            </select>
-                        </div>
                     </div>
 
                     <!-- Action Buttons -->
@@ -136,7 +114,7 @@
                                 <div class="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300">
                                     <div class="relative overflow-hidden h-56">
                                         @if($menu->image)
-                                        <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                         @else
                                         <div class="w-full h-full bg-gradient-to-br from-wood-400 to-wood-600 flex items-center justify-center">
                                             <svg class="w-24 h-24 text-cream-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +189,7 @@
                         <div class="bg-white rounded-lg shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300">
                             <div class="relative overflow-hidden h-56">
                                 @if($menu->image)
-                                <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                 @else
                                 <div class="w-full h-full bg-gradient-to-br from-wood-400 to-wood-600 flex items-center justify-center">
                                     <svg class="w-24 h-24 text-cream-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">

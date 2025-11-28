@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Promo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Str;
 
@@ -13,8 +12,7 @@ class PromoController extends Controller
 {
     public function index()
     {
-        $promos = Promo::latest()->paginate(15)->withQueryString();
-        return view('admin.promos.index', compact('promos'));
+        return view('admin.promos.index');
     }
 
     public function create()
@@ -48,10 +46,10 @@ class PromoController extends Controller
             $img = Image::read($image);
             $img->cover(800, 600);
             
-            $path = 'promos/' . $filename;
-            Storage::put($path, $img->encode());
+            $path = public_path('uploads/promos/' . $filename);
+            file_put_contents($path, $img->encode());
             
-            $validated['image'] = $path;
+            $validated['image'] = 'uploads/promos/' . $filename;
         }
 
         Promo::create($validated);
@@ -90,8 +88,8 @@ class PromoController extends Controller
         $validated['is_active'] = $request->has('is_active') ? true : false;
 
         if ($request->hasFile('image')) {
-            if ($promo->image) {
-                Storage::delete($promo->image);
+            if ($promo->image && file_exists(public_path($promo->image))) {
+                unlink(public_path($promo->image));
             }
 
             $image = $request->file('image');
@@ -100,10 +98,10 @@ class PromoController extends Controller
             $img = Image::read($image);
             $img->cover(800, 600);
             
-            $path = 'promos/' . $filename;
-            Storage::put($path, $img->encode());
+            $path = public_path('uploads/promos/' . $filename);
+            file_put_contents($path, $img->encode());
             
-            $validated['image'] = $path;
+            $validated['image'] = 'uploads/promos/' . $filename;
         }
 
         $promo->update($validated);
@@ -114,8 +112,8 @@ class PromoController extends Controller
 
     public function destroy(Promo $promo)
     {
-        if ($promo->image) {
-            Storage::delete($promo->image);
+        if ($promo->image && file_exists(public_path($promo->image))) {
+            unlink(public_path($promo->image));
         }
 
         $promo->delete();

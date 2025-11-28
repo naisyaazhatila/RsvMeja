@@ -12,7 +12,9 @@ class ReservationObserver
     public function creating(Reservation $reservation): void
     {
         if (empty($reservation->booking_code)) {
-            $reservation->booking_code = 'RES-' . date('Ymd') . '-' . str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+            // Use Carbon with user's timezone for accurate date/time
+            $now = \Carbon\Carbon::now();
+            $reservation->booking_code = 'RES-' . $now->format('Ymd-His') . '-' . str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
         }
     }
 }

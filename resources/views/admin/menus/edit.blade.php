@@ -75,7 +75,7 @@
                         <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Gambar Menu</label>
                         @if($menu->image)
                             <div class="mb-3">
-                                <img src="{{ Storage::url($menu->image) }}" alt="{{ $menu->name }}" class="w-48 h-48 object-cover rounded-lg">
+                                <img src="{{ asset($menu->image) }}" alt="{{ $menu->name }}" class="w-48 h-48 object-cover rounded-lg">
                                 <p class="mt-1 text-sm text-gray-500">Gambar saat ini</p>
                             </div>
                         @endif

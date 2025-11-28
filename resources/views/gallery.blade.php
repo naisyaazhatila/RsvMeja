@@ -38,7 +38,7 @@
                      x-transition:enter-end="opacity-100 transform scale-100"
                      @click="openLightbox({{ $image->id }})">
                     
-                    <img src="{{ Storage::url($image->image_path) }}" 
+                    <img src="{{ asset($image->image_path) }}" 
                          alt="{{ $image->title }}" 
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                     
@@ -125,6 +125,7 @@
 
     @push('scripts')
     <script>
+        // Cache busting: {{ now()->timestamp }}
         function gallery() {
             return {
                 filterCategory: 'all',

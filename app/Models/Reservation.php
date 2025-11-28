@@ -69,6 +69,11 @@ class Reservation extends Model
         return $query->where('status', 'cancelled');
     }
 
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', 'completed');
+    }
+
     public function scopeToday($query)
     {
         return $query->whereDate('reservation_date', today());
@@ -125,6 +130,13 @@ class Reservation extends Model
     {
         $this->update([
             'status' => 'cancelled',
+        ]);
+    }
+
+    public function complete()
+    {
+        $this->update([
+            'status' => 'completed',
         ]);
     }
 }

@@ -16,10 +16,11 @@ class GalleryController extends Controller
             ->get();
 
         // Prepare data for JavaScript lightbox
-        $allImages = $images->map(function($img) {
+        $cacheBuster = '?v=' . time();
+        $allImages = $images->map(function($img) use ($cacheBuster) {
             return [
                 'id' => $img->id,
-                'url' => asset('storage/' . $img->image_path),
+                'url' => url($img->image_path) . $cacheBuster,
                 'title' => $img->title,
                 'description' => $img->description ?? '',
                 'category' => ucfirst($img->category)

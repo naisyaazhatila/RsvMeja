@@ -19,13 +19,15 @@ class PaymentInstructionController extends Controller
             abort(403, 'Unauthorized access to this reservation');
         }
 
-        // Calculate DP amount (30% of estimated total)
-        $dpPercentage = 30;
-        $estimatedTotal = 500000; // You can calculate based on menu items or guest count
-        $dpAmount = ($estimatedTotal * $dpPercentage) / 100;
+        // Get DP amount from reservation record
+        $dpAmount = $reservation->dp_amount;
 
         // WhatsApp number for payment proof (admin/restaurant)
-        $whatsappNumber = '6281234567890'; // Replace with actual restaurant WhatsApp
+        $whatsappNumber = setting('restaurant_phone', '6281234567890');
+        $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
+        if (!str_starts_with($whatsappNumber, '62')) {
+            $whatsappNumber = '62' . ltrim($whatsappNumber, '0');
+        }
         
         // Generate WhatsApp message
         $message = "Halo Asya's Kitchen, saya ingin mengkonfirmasi pembayaran DP untuk:\n\n";
@@ -40,6 +42,6 @@ class PaymentInstructionController extends Controller
 
         $whatsappUrl = 'https://wa.me/' . $whatsappNumber . '?text=' . urlencode($message);
 
-        return view('payment-instruction', compact('reservation', 'dpAmount', 'dpPercentage', 'whatsappUrl'));
+        return view('payment-instruction', compact('reservation', 'dpAmount', 'whatsappUrl'));
     }
 }
