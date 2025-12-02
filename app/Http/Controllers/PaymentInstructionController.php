@@ -23,12 +23,12 @@ class PaymentInstructionController extends Controller
         $dpAmount = $reservation->dp_amount;
 
         // WhatsApp number for payment proof (admin/restaurant)
-        $whatsappNumber = setting('restaurant_phone', '6281234567890');
-        $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
+        $whatsappNumber = setting('whatsapp_number', '6282283477746'); // ambil dari key 'whatsapp_number'
+        $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber); // hapus semua selain angka
         if (!str_starts_with($whatsappNumber, '62')) {
-            $whatsappNumber = '62' . ltrim($whatsappNumber, '0');
+            $whatsappNumber = '62' . ltrim($whatsappNumber, '0'); // pastikan diawali 62
         }
-        
+
         // Generate WhatsApp message
         $message = "Halo Asya's Kitchen, saya ingin mengkonfirmasi pembayaran DP untuk:\n\n";
         $message .= "Kode Booking: {$reservation->booking_code}\n";
@@ -41,6 +41,7 @@ class PaymentInstructionController extends Controller
         $message .= "Saya sudah melakukan transfer. Mohon konfirmasi.";
 
         $whatsappUrl = 'https://wa.me/' . $whatsappNumber . '?text=' . urlencode($message);
+
 
         return view('payment-instruction', compact('reservation', 'dpAmount', 'whatsappUrl'));
     }

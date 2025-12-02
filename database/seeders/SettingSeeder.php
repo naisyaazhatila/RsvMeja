@@ -17,18 +17,18 @@ class SettingSeeder extends Seeder
             // General Settings
             ['key' => 'restaurant_name', 'value' => 'Asya\'s Kitchen', 'group' => 'general'],
             ['key' => 'restaurant_address', 'value' => 'Jl. Kemang Raya No. 88, Jakarta Selatan 12730', 'group' => 'general'],
-            ['key' => 'restaurant_phone', 'value' => '021-7198765', 'group' => 'general'],
+            ['key' => 'restaurant_phone', 'value' => '022-83477746', 'group' => 'general'],
             ['key' => 'restaurant_email', 'value' => 'hello@asyaskitchen.com', 'group' => 'general'],
             ['key' => 'operating_hours', 'value' => '10:00 - 22:00', 'group' => 'general'],
 
             // Payment Settings
-            ['key' => 'bank_name', 'value' => 'BCA', 'group' => 'payment'],
-            ['key' => 'account_number', 'value' => '5420123456', 'group' => 'payment'],
-            ['key' => 'account_holder', 'value' => 'Asya\'s Kitchen', 'group' => 'payment'],
+            ['key' => 'bank_name', 'value' => 'mandiri', 'group' => 'payment'],
+            ['key' => 'account_number', 'value' => '1090023842289', 'group' => 'payment'],
+            ['key' => 'account_holder', 'value' => 'Naisya Azhatila', 'group' => 'payment'],
             ['key' => 'dp_amount', 'value' => '100000', 'group' => 'payment'],
 
             // Social Media Settings
-            ['key' => 'whatsapp_number', 'value' => '628111234567', 'group' => 'social'],
+            ['key' => 'whatsapp_number', 'value' => '6282283477746', 'group' => 'social'],
             ['key' => 'instagram_url', 'value' => 'https://instagram.com/asyaskitchen', 'group' => 'social'],
             ['key' => 'facebook_url', 'value' => 'https://facebook.com/asyaskitchen', 'group' => 'social'],
             ['key' => 'google_maps_embed', 'value' => '', 'group' => 'social'],

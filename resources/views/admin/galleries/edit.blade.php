@@ -69,6 +69,15 @@
                         </div>
                     </div>
 
+                    <!-- Is Active -->
+                    <div class="mb-6">
+                        <label class="flex items-center gap-3">
+                            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $galeri->is_active) ? 'checked' : '' }}
+                                   class="rounded border-gray-300 text-wood-600 shadow-sm focus:border-wood-500 focus:ring-wood-500">
+                            <span class="text-sm font-medium text-gray-700">Aktifkan galeri ini (tampil di website)</span>
+                        </label>
+                    </div>
+
                     <!-- Buttons -->
                     <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
                         <a href="{{ route('admin.galeri.index') }}" class="px-6 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold rounded-lg transition duration-200">

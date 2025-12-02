@@ -37,7 +37,7 @@
                     <div class="bg-white rounded-lg shadow-sm overflow-hidden group hover:shadow-lg transition duration-200">
                         <!-- Image -->
                         <div class="relative h-64 overflow-hidden bg-gray-200">
-                            <img src="{{ $gallery->image_path ?: asset('images/no-image.jpg') }}" 
+                            <img src="{{ $gallery->image_path ? asset($gallery->image_path) : asset('images/no-image.jpg') }}" 
                                  alt="{{ $gallery->title }}" 
                                  class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
                         </div>

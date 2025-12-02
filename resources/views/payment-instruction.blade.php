@@ -130,8 +130,8 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm text-gray-600 font-medium mb-1">Bank Mandiri</p>
-                                <p class="font-bold text-2xl text-bark-900 mb-1">9876543210</p>
-                                <p class="text-sm text-gray-600">a.n. Asya's Kitchen</p>
+                                <p class="font-bold text-2xl text-bark-900 mb-1">1090023842289</p>
+                                <p class="text-sm text-gray-600">a.n. NAISYA AZHATILA</p>
                             </div>
                             <button onclick="copyToClipboard('9876543210')" class="px-4 py-2 bg-white text-wood-600 rounded-lg hover:bg-cream-100 transition font-semibold text-sm">
                                 Copy
@@ -217,7 +217,7 @@
                 <p class="mb-2">Butuh bantuan? Hubungi kami:</p>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="tel:+6281234567890" class="text-wood-600 hover:text-wood-700 font-semibold">
-                        📞 0812-3456-7890
+                        📞 0822-8347-7746
                     </a>
                     <a href="mailto:info@asyaskitchen.com" class="text-wood-600 hover:text-wood-700 font-semibold">
                         ✉️ info@asyaskitchen.com

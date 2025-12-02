@@ -95,11 +95,11 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Prepare data for JavaScript lightbox
+        // Prepare data for JavaScript lightbox - using asset() for consistency 
         $allImages = $images->map(function($img) {
             return [
                 'id' => $img->id,
-                'url' => asset('storage/' . $img->image_path),
+                'url' => asset($img->image_path),
                 'title' => $img->title,
                 'description' => $img->description ?? '',
                 'category' => ucfirst($img->category)

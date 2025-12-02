@@ -69,7 +69,7 @@
 
                 <!-- Actions -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-                    <form action="{{ route('admin.galeri.destroy', $gallery) }}" method="POST" 
+                    <form action="{{ route('admin.galeri.destroy', $galeri) }}" method="POST"
                           onsubmit="return confirm('Yakin ingin menghapus foto ini?')" class="inline-block">
                         @csrf
                         @method('DELETE')
